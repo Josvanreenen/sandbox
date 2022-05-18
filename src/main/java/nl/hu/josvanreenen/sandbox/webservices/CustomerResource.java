@@ -39,9 +39,23 @@ public class CustomerResource {
 
 
     @POST
+    @Path("halfjackson")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createCustomer(@FormParam("name") String name) {
+        if (!Company.getCompany().addCustomer(name)) {
+            Map<String, String> messages = new HashMap<>();
+            messages.put("error", "Klant bestond al");
+            return Response.status(Response.Status.CONFLICT).entity(messages).build();
+        }
+        return Response.ok(Company.getCompany().getCustomerByName(name)).build();
+
+    }
+
+
+    @POST
     @Path("nojackson")
     @Produces(MediaType.APPLICATION_JSON)
-    public String createCustomer(@FormParam("name") String name) {
+    public String createCustomerJob(@FormParam("name") String name) {
             JsonObjectBuilder job = Json.createObjectBuilder();
         if (Company.getCompany().addCustomer(name)) {
             Customer added = Company.getCompany().getCustomerByName(name);
